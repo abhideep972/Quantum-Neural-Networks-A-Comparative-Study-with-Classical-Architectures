@@ -71,7 +71,7 @@ class QuantumNeuralNetwork(Model):
         for k in range(len(gradients)):
             for label_idx,indices in enumerate(self.post_processing.values()):
                 p=max(float(output[k,label_idx]),eps)
-                dp=gradients[k,:,indices].sum(axis=1)
+                dp=gradients[k][:, indices].sum(axis=1)
                 score=dp/np.sqrt(p)
                 fishers[k]+=np.outer(score,score)
         return fishers
@@ -81,3 +81,4 @@ class QuantumNeuralNetwork(Model):
         for idx,bits in enumerate(itertools.product([0,1],repeat=self.circuit.num_qubits)):
             (even if sum(bits)%2==0 else odd).append(idx)
         return {'y1':even,'y2':odd}
+

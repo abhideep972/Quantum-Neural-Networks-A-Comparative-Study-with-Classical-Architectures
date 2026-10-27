@@ -10,7 +10,8 @@ def main():
  p=argparse.ArgumentParser(); p.add_argument('--num-inputs',type=int,default=100); p.add_argument('--num-thetas',type=int,default=100); p.add_argument('--blocks',type=int,default=9); a=p.parse_args()
  fm=z_feature_map(feature_dimension=4,reps=1); vf=real_amplitudes(4,reps=a.blocks)
  ed=EffectiveDimension(QuantumNeuralNetwork(fm,vf),a.num_thetas,a.num_inputs)
- f,_=ed.get_fhat(); out=ROOT/'results'/'fisher_spectrum'; out.mkdir(exist_ok=True)
+ f,_=ed.get_fhat(); out=ROOT/'results'/'fisher_spectrum'; out.mkdir(parents=True,exist_ok=True)
  np.save(out/'4qubits_9layer_f_hats_pauli.npy',f)
  print('saved',out/'4qubits_9layer_f_hats_pauli.npy',f.shape)
 if __name__=='__main__': main()
+
