@@ -227,6 +227,44 @@ class QuantumNeuralNetwork(Model):
 
         return grads
 
+
+    def forward_and_gradient(self, params, x):
+        # Evaluate outputs and exact parameter-shift gradients in one sweep.
+        params, x = self._as_batches(params, x)
+        n = len(x)
+        state_dim = 2 ** self.circuit.num_qubits
+
+        param_blocks = [params]
+        x_blocks = [x]
+
+        for j in range(self.d):
+            plus = params.copy()
+            minus = params.copy()
+            plus[:, j] += np.pi / 2
+            minus[:, j] -= np.pi / 2
+            param_blocks.extend((plus, minus))
+            x_blocks.extend((x, x))
+
+        all_params = np.concatenate(param_blocks, axis=0)
+        all_x = np.concatenate(x_blocks, axis=0)
+        all_probs = self._get_probabilities(all_params, all_x)
+
+        base_probs = all_probs[:n]
+        out = np.zeros((n, self.outputsize), dtype=float)
+        for label_idx, indices in enumerate(self.post_processing.values()):
+            out[:, label_idx] = base_probs[:, indices].sum(axis=1)
+
+        grads = np.empty((n, self.d, state_dim), dtype=float)
+        offset = n
+        for j in range(self.d):
+            plus = all_probs[offset:offset + n]
+            offset += n
+            minus = all_probs[offset:offset + n]
+            offset += n
+            grads[:, j, :] = 0.5 * (plus - minus)
+
+        return out, grads
+
     def get_fisher(self, gradients, model_output):
         gradients = np.asarray(gradients, dtype=float)
         output = np.asarray(model_output, dtype=float)

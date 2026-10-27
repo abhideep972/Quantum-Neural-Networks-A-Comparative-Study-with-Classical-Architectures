@@ -5,7 +5,6 @@ import torch
 from torch import nn
 from sklearn.datasets import load_iris
 from sklearn.preprocessing import normalize
-from sklearn.utils import shuffle
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -27,25 +26,34 @@ class ANN(nn.Module):
         return self.net(x)
 
 
+def create_rand_params(module):
+    if isinstance(module, nn.Linear):
+        module.weight.data.uniform_(0.0, 1.0)
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--runs', type=int, default=100)
-    parser.add_argument('--epochs', type=int, default=100)
+    parser.add_argument("--runs", type=int, default=100)
+    parser.add_argument("--start-run", type=int, default=0)
+    parser.add_argument("--epochs", type=int, default=100)
     args = parser.parse_args()
 
     iris = load_iris()
     X = normalize(iris.data[:100])
     y = iris.target[:100]
-    X, y = shuffle(X, y, random_state=0)
     X = torch.tensor(X, dtype=torch.float64)
     y = torch.tensor(y, dtype=torch.long)
 
-    out = ROOT / 'results' / 'trainability' / 'classical'
+    out = ROOT / "results" / "trainability" / "regenerated" / "classical"
     out.mkdir(parents=True, exist_ok=True)
 
-    for run in range(args.runs):
+    for run in range(args.start_run, args.start_run + args.runs):
+        np.random.seed(run)
         torch.manual_seed(run)
+
         model = ANN()
+        model.apply(create_rand_params)
+
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
         loss_fn = nn.CrossEntropyLoss()
         losses = []
@@ -57,9 +65,9 @@ def main():
             loss.backward()
             optimizer.step()
 
-        np.save(out / f'classical_loss_{run}.npy', np.asarray(losses))
-        print(run, losses[-1])
+        np.save(out / f"classical_loss_{run}.npy", np.asarray(losses))
+        print(f"run={run:03d} epochs={len(losses):03d} final_loss={losses[-1]:.12f}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,21 +1,43 @@
 from pathlib import Path
-import argparse, sys, numpy as np
-ROOT=Path(__file__).resolve().parents[2]; sys.path.insert(0,str(ROOT)); sys.path.insert(0,str(Path(__file__).parent))
-from qiskit import QuantumCircuit
+import argparse
+import sys
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).parent))
+
 from qiskit.circuit.library import zz_feature_map, real_amplitudes
-from qnn_repro import ADAM
-from common import iris_binary, parity_prob, cross_entropy
+from qnn_repro import QuantumNeuralNetwork
+from common import iris_binary, historical_qnn_init, qnn_loss_and_grad, adam_exact
+
 
 def main():
- p=argparse.ArgumentParser(); p.add_argument('--runs',type=int,default=100); p.add_argument('--maxiter',type=int,default=100); p.add_argument('--samples-per-class',type=int,default=49); a=p.parse_args()
- data=iris_binary(a.samples_per_class); fm=zz_feature_map(feature_dimension=4,reps=2); vf=real_amplitudes(4,reps=1); qc=QuantumCircuit(4); qc.compose(fm,inplace=True); qc.compose(vf,inplace=True); fp=list(fm.parameters); vp=list(vf.parameters)
- samples=[(label,x) for label,xs in data.items() for x in xs]
- def cost(theta):
-  total=0.0
-  for label,x in samples:
-   bind={**dict(zip(fp,x)),**dict(zip(vp,theta))}; total+=cross_entropy(parity_prob(qc,bind),label)
-  return total/len(samples)
- out=ROOT/'results'/'trainability'/'qnn'; out.mkdir(parents=True,exist_ok=True)
- for i in range(a.runs):
-  init=2*np.pi*np.random.default_rng(i).random(len(vp)); opt=ADAM(maxiter=a.maxiter,lr=0.1); theta,val,_,loss=opt.optimize(len(vp),cost,initial_point=init); np.save(out/f'quantum_loss_hard_dep2_{i}.npy',loss); np.save(out/f'params_{i}.npy',theta); print(i,val)
-if __name__=='__main__': main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--runs", type=int, default=100)
+    parser.add_argument("--start-run", type=int, default=0)
+    parser.add_argument("--maxiter", type=int, default=100)
+    parser.add_argument("--samples-per-class", type=int, default=49)
+    args = parser.parse_args()
+
+    x, y = iris_binary(args.samples_per_class)
+    fm = zz_feature_map(feature_dimension=4, reps=2)
+    vf = real_amplitudes(4, reps=1)
+    model = QuantumNeuralNetwork(fm, vf)
+
+    out = ROOT / "results" / "trainability" / "regenerated" / "qnn"
+    out.mkdir(parents=True, exist_ok=True)
+
+    for run in range(args.start_run, args.start_run + args.runs):
+        init = historical_qnn_init(run, model.d)
+        loss_grad = lambda theta: qnn_loss_and_grad(model, theta, x, y)
+        theta, value, loss = adam_exact(
+            loss_grad, init, maxiter=args.maxiter, lr=0.1
+        )
+        np.save(out / f"quantum_loss_hard_dep2_{run}.npy", loss)
+        np.save(out / f"params_{run}.npy", theta)
+        print(f"run={run:03d} iterations={len(loss):03d} final_loss={value:.12f}")
+
+
+if __name__ == "__main__":
+    main()
