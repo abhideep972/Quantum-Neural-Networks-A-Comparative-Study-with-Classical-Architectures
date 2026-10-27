@@ -10,34 +10,36 @@ The project studies how model geometry and quantum feature-map choice affect mod
 - classical vs. easy-QNN vs. more expressive QNN comparisons;
 - trainability and barren-plateau behaviour.
 
-## What is in this repository
+## Repository contents
 
 ```text
-qnn_repro/                    modern implementation
+qnn_repro/                    modern QNN/CNN implementation
 experiments/
   effective_dimension/        effective-dimension experiment drivers
   fisher_spectrum/            Fisher-spectrum experiment drivers
   trainability/               classical/QNN training experiment drivers
-figures/                      representative reproduced figures
-tests/                        smoke tests
-.github/workflows/            CI test workflow
+figures/                      representative previously reproduced figures
+tests/                        smoke and numerical-equivalence tests
+.github/workflows/            CI smoke-test workflow
 requirements.txt
 ATTRIBUTION.md
 ```
 
-The original Abbas *et al.* source tree is intentionally **not vendored here**. It is linked in `ATTRIBUTION.md` instead. This keeps the repository focused on the modern implementation and the analyses used in this project.
+The original Abbas *et al.* source tree is intentionally **not vendored here**. It is linked in `ATTRIBUTION.md`. This keeps the repository focused on the modern implementation and the analyses used in this project.
 
 ## Modern implementation
 
 `qnn_repro/` contains:
 
-- `quantum_nn.py` — statevector QNN evaluation, parameter-shift gradients and Fisher matrices;
+- `quantum_nn.py` — QNN statevector evaluation, parameter-shift gradients and Fisher matrices;
 - `classical_nn.py` — classical feed-forward baseline;
 - `effective_dimension.py` — normalized Fisher matrices and effective-dimension calculation;
-- `optimizer.py` — small self-contained Adam optimizer replacing the removed `qiskit.aqua` optimizer;
+- `optimizer.py` — self-contained Adam optimizer replacing the removed `qiskit.aqua` optimizer;
 - `model_base.py` — common model interface.
 
-The QNN implementation uses current Qiskit circuit composition and statevector APIs and avoids the legacy multiprocessing design so it can run on Windows as well as Linux.
+The QNN implementation has been updated to current Qiskit APIs. For QNN forward and gradient evaluation it uses Qiskit Aer batched parameter sweeps, with CPU-thread control through `QNN_AER_THREADS`. A pure-Qiskit `Statevector` path remains as a reference/fallback implementation.
+
+The Aer implementation was checked numerically against `Statevector.from_instruction()` and the repository smoke tests verify forward probabilities, parameter-shift gradients, Fisher matrices and a small effective-dimension calculation.
 
 ## Experiments
 
@@ -71,6 +73,8 @@ Generated numerical results are written under `results/`, which is ignored by Gi
 
 ## Representative figures
 
+The figures below are **previously reproduced project outputs** retained as reference results while the modernized implementation is being fully re-run. They are not presented as fresh outputs from the current Aer backend.
+
 ### Effective dimension
 
 ![Effective dimension](figures/effective_dimension.png)
@@ -86,8 +90,6 @@ Generated numerical results are written under `results/`, which is ignored by Gi
 ### Trainability comparison
 
 ![Trainability](figures/trainability_loss.png)
-
-These figures document the analyses reproduced during the project. They are included as reference outputs; regenerating them exactly requires the full experiment settings and stochastic runs used for the corresponding analysis.
 
 ## Installation
 
@@ -105,7 +107,7 @@ pip install -r requirements.txt
 pytest -q
 ```
 
-The smoke tests check QNN forward probabilities, parameter-shift gradients, Fisher matrices, and a small effective-dimension calculation. The same tests are run automatically by GitHub Actions.
+The current test suite includes an Aer-vs-reference-statevector numerical-equivalence check in addition to the QNN/Fisher/effective-dimension smoke tests.
 
 ## Research context
 
