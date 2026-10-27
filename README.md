@@ -1,132 +1,118 @@
 # Quantum Neural Networks: A Comparative Study with Classical Architectures
 
-Summer 2025 research-training repository documenting my comparative study and reproduction of selected results from **“The power of quantum neural networks”** (Abbas *et al.*, *Nature Computational Science*, 2021) during my internship at **IISER Bhopal**, advised by **Dr. Kuntal Roy (EECS)**.
+Modernized research code for a comparative study of classical neural networks and quantum neural networks (QNNs), developed from work carried out during a quantum-machine-learning research project at IISER Bhopal.
 
-## Project scope
+The project studies how model geometry and quantum feature-map choice affect model complexity and trainability through:
 
-The project focused on understanding how the geometry of a model's parameter space can be used to study the **capacity and trainability of quantum neural networks (QNNs)**.
+- parameterized quantum circuits and variational models;
+- Fisher information matrices and Fisher-information spectra;
+- effective dimension;
+- classical vs. easy-QNN vs. more expressive QNN comparisons;
+- trainability and barren-plateau behaviour.
 
-I studied and reproduced selected analyses involving:
-
-- parameterized quantum circuits and variational quantum models;
-- quantum feature maps and alternative data-encoding strategies;
-- the **Fisher information matrix** and its eigenvalue spectrum;
-- **effective dimension** as an information-geometric model-complexity measure;
-- comparisons between classical feed-forward networks, an "easy" quantum model, and a more expressive QNN;
-- the relationship between Fisher-spectrum concentration, flat optimization landscapes, **trainability**, and barren-plateau behaviour.
-
-The project used these ideas to compare classical and quantum model parameterizations and to understand how the choice of quantum encoding can alter the optimization landscape.
-
-## Important provenance note
-
-This repository is a **reproduction / research-study record**, not a claim of authorship of the underlying effective-dimension software.
-
-The code under [`upstream_code/`](upstream_code/) and the selected reproduction scripts/data under [`reproduction/`](reproduction/) originate from the open-source repository accompanying:
-
-> A. Abbas, D. Sutter, C. Zoufal, A. Lucchi, A. Figalli, and S. Woerner,  
-> **“The power of quantum neural networks,”** *Nature Computational Science* 1, 403–409 (2021).  
-> DOI: 10.1038/s43588-021-00084-1
-
-Original implementation: https://github.com/amyami187/effective_dimension  
-Archived software release: https://doi.org/10.5281/zenodo.4732830
-
-The original software is distributed under the **Apache License 2.0**. Its license is retained in [`upstream_code/LICENSE`](upstream_code/LICENSE).
-
-My contribution in this repository is the **internship study/reproduction context, documentation, and selection of the analyses used during the project**.
-
-## Repository structure
+## What is in this repository
 
 ```text
-Quantum-Neural-Networks-A-Comparative-Study-with-Classical-Architectures/
-├── README.md
-├── ATTRIBUTION.md
-├── requirements-legacy.txt
-├── .gitignore
-│
-├── upstream_code/
-│   ├── LICENSE
-│   ├── README.md
-│   ├── example_cnn.py
-│   ├── example_qnn.py
-│   └── effective_dimension/
-│
-└── reproduction/
-    ├── effective_dimension/
-    ├── fisher_spectrum/
-    └── trainability/
+qnn_repro/                    modern implementation
+experiments/
+  effective_dimension/        effective-dimension experiment drivers
+  fisher_spectrum/            Fisher-spectrum experiment drivers
+  trainability/               classical/QNN training experiment drivers
+figures/                      representative reproduced figures
+tests/                        smoke tests
+.github/workflows/            CI test workflow
+requirements.txt
+ATTRIBUTION.md
 ```
 
-## What each reproduction section corresponds to
+The original Abbas *et al.* source tree is intentionally **not vendored here**. It is linked in `ATTRIBUTION.md` instead. This keeps the repository focused on the modern implementation and the analyses used in this project.
 
-### 1. Effective dimension
+## Modern implementation
 
-[`reproduction/effective_dimension/`](reproduction/effective_dimension/) contains the scripts and data used to compare effective dimension across:
+`qnn_repro/` contains:
 
-- a classical feed-forward neural network;
-- an easy quantum model;
-- a QNN with a more expressive feature map.
+- `quantum_nn.py` — statevector QNN evaluation, parameter-shift gradients and Fisher matrices;
+- `classical_nn.py` — classical feed-forward baseline;
+- `effective_dimension.py` — normalized Fisher matrices and effective-dimension calculation;
+- `optimizer.py` — small self-contained Adam optimizer replacing the removed `qiskit.aqua` optimizer;
+- `model_base.py` — common model interface.
 
-The original reproduction setup uses input size 4, output size 2, and 40 trainable parameters for the effective-dimension comparison.
+The QNN implementation uses current Qiskit circuit composition and statevector APIs and avoids the legacy multiprocessing design so it can run on Windows as well as Linux.
 
-### 2. Fisher information spectrum
+## Experiments
 
-[`reproduction/fisher_spectrum/`](reproduction/fisher_spectrum/) contains the selected main-figure scripts/data for studying the eigenvalue distribution of the Fisher information matrix.
-
-The key interpretation investigated during the internship was that a Fisher spectrum concentrated near zero corresponds to many locally flat parameter directions, while a broader spectrum can indicate a more favourable optimization landscape.
-
-### 3. Trainability
-
-[`reproduction/trainability/`](reproduction/trainability/) contains the selected training scripts and plotting code used in the original study to compare the loss evolution of classical and quantum models.
-
-This part of the internship was used to connect:
-
-```text
-feature-map choice
-        ↓
-Fisher-information spectrum
-        ↓
-optimization-landscape geometry
-        ↓
-trainability / barren-plateau behaviour
-```
-
-## Legacy environment
-
-The original reproduction code was written for an older Qiskit/PyTorch stack. A historically compatible environment is approximately:
+### Effective dimension
 
 ```bash
-conda create -n qnn-repro python=3.7
-conda activate qnn-repro
-pip install qiskit==0.23.0 torch==1.3.1 numpy scipy matplotlib scikit-learn
+python experiments/effective_dimension/ed_cnn.py --num-inputs 10 --num-thetas 10
+python experiments/effective_dimension/ed_easy_qnn.py --num-inputs 10 --num-thetas 10 --blocks 2
+python experiments/effective_dimension/ed_qnn.py --num-inputs 10 --num-thetas 10 --blocks 2
 ```
 
-Modern Qiskit APIs have changed substantially, so the original scripts may require adaptation to run under current versions.
-
-## Example code
-
-The original package includes simple classical and quantum model examples:
+### Fisher-information spectrum
 
 ```bash
-cd upstream_code
-python example_cnn.py
-python example_qnn.py
+python experiments/fisher_spectrum/fisher_cnn.py --num-inputs 10 --num-thetas 10
+python experiments/fisher_spectrum/fisher_easy_qnn.py --num-inputs 10 --num-thetas 10 --blocks 2
+python experiments/fisher_spectrum/fisher_qnn.py --num-inputs 10 --num-thetas 10 --blocks 2
 ```
 
-The QNN example constructs a feature map and variational form, evaluates model probabilities, and computes Fisher-information quantities used by the effective-dimension framework.
+### Trainability
+
+Small smoke runs can be used before full experiments:
+
+```bash
+python experiments/trainability/classical_loss.py --runs 2 --epochs 10
+python experiments/trainability/easy_qnn.py --runs 1 --maxiter 5 --samples-per-class 5
+python experiments/trainability/hard_qnn.py --runs 1 --maxiter 5 --samples-per-class 5
+```
+
+Generated numerical results are written under `results/`, which is ignored by Git.
+
+## Representative figures
+
+### Effective dimension
+
+![Effective dimension](figures/effective_dimension.png)
+
+### Fisher-information spectrum
+
+![Fisher spectrum](figures/fisher_spectrum.png)
+
+### Cumulative Fisher spectrum
+
+![Cumulative Fisher spectrum](figures/fisher_cumulative.png)
+
+### Trainability comparison
+
+![Trainability](figures/trainability_loss.png)
+
+These figures document the analyses reproduced during the project. They are included as reference outputs; regenerating them exactly requires the full experiment settings and stochastic runs used for the corresponding analysis.
+
+## Installation
+
+Python 3.11 is recommended.
+
+```bash
+python -m venv .venv
+# activate the environment
+pip install -r requirements.txt
+```
+
+## Tests
+
+```bash
+pytest -q
+```
+
+The smoke tests check QNN forward probabilities, parameter-shift gradients, Fisher matrices, and a small effective-dimension calculation. The same tests are run automatically by GitHub Actions.
 
 ## Research context
 
-**Institution:** Indian Institute of Science Education and Research (IISER) Bhopal  
-**Period:** Summer 2025  
-**Advisor:** Dr. Kuntal Roy, EECS Department  
-**Student:** Abhideep Jain, B.Tech. Engineering Physics, Delhi Technological University
+**Institution:** IISER Bhopal  
+**Advisor:** Dr. Kuntal Roy, EECS  
+**Project:** Quantum Neural Networks / comparative study with classical architectures
 
-## References
+## Reference
 
-1. A. Abbas, D. Sutter, C. Zoufal, A. Lucchi, A. Figalli, and S. Woerner, “The power of quantum neural networks,” *Nature Computational Science* 1, 403–409 (2021). https://doi.org/10.1038/s43588-021-00084-1
-2. H. Qi *et al.*, “The barren plateaus of quantum neural networks: review, taxonomy and trends,” *Quantum Information Processing* 22, 435 (2023).
-3. V. Havlíček *et al.*, “Supervised learning with quantum-enhanced feature spaces,” *Nature* 567, 209–212 (2019).
-
-## License and reuse
-
-The copied upstream implementation is licensed under Apache-2.0; see [`upstream_code/LICENSE`](upstream_code/LICENSE).  
+A. Abbas, D. Sutter, C. Zoufal, A. Lucchi, A. Figalli, and S. Woerner, “The power of quantum neural networks,” *Nature Computational Science* 1, 403–409 (2021).

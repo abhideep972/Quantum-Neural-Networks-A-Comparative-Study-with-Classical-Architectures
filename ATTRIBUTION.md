@@ -1,23 +1,14 @@
-# Attribution and code provenance
+# Attribution
 
-This repository documents a Summer 2025 IISER Bhopal research-training project by Abhideep Jain.
+This repository is a modern compatibility implementation and study project created in the context of my IISER Bhopal quantum-machine-learning internship.
 
-## Upstream software
-
-The computational framework used for the reproduction was obtained from:
-
-- Repository: https://github.com/amyami187/effective_dimension
-- Release: v1.0.0
-- Zenodo: https://doi.org/10.5281/zenodo.4732830
-- Primary software author listed by Zenodo: Amira Abbas
-- License: Apache License 2.0
-
-The upstream repository accompanies the paper:
+The scientific comparison and definitions follow:
 
 A. Abbas, D. Sutter, C. Zoufal, A. Lucchi, A. Figalli, and S. Woerner,
-“The power of quantum neural networks,” Nature Computational Science 1,
-403–409 (2021), DOI: 10.1038/s43588-021-00084-1.
+“The power of quantum neural networks,” *Nature Computational Science* 1, 403–409 (2021).
+https://doi.org/10.1038/s43588-021-00084-1
 
-Files copied from that repository are kept under `upstream_code/` or
-`reproduction/`. They should not be interpreted as original software
-authored by Abhideep Jain.
+Original authors' code:
+https://github.com/amyami187/effective_dimension
+
+The original source code is **not copied into this repository**. The code here is a modernized implementation written to reproduce the specific effective-dimension, Fisher-information, and trainability analyses studied during the internship using current Python/Qiskit APIs.
