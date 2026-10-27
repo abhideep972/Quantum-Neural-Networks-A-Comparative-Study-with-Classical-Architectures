@@ -73,7 +73,7 @@ Generated numerical results are written under `results/`, which is ignored by Gi
 
 ## Representative figures
 
-The figures below are **previously reproduced project outputs** retained as reference results while the modernized implementation is being fully re-run. They are not presented as fresh outputs from the current Aer backend.
+The figures below are **representative reproduced project outputs** corresponding to the analyses carried out during the project.
 
 ### Effective dimension
 
