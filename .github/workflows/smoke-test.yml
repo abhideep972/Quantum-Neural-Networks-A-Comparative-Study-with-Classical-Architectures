@@ -1,14 +1,33 @@
 name: smoke-test
-on: [push, pull_request]
+
+on:
+  push:
+  pull_request:
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
-        with: {python-version: '3.11'}
-      - run: pip install -r requirements.txt
-      - run: pytest -q
-      - run: MPLBACKEND=Agg python reproduction/effective_dimension/plot_fig/ed_plot.py
-      - run: MPLBACKEND=Agg python reproduction/fisher_spectrum/plot_fig/dist_plot.py
-      - run: MPLBACKEND=Agg python reproduction/trainability/plot_fig/loss_plot.py
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run unit smoke tests
+        run: pytest -q
+
+      - name: Classical trainability smoke test
+        run: python experiments/trainability/classical_loss.py --runs 1 --epochs 2
+
+      - name: Easy-QNN effective-dimension smoke test
+        run: python experiments/effective_dimension/ed_easy_qnn.py --num-inputs 2 --num-thetas 2 --blocks 1
+
+      - name: QNN Fisher-spectrum smoke test
+        run: python experiments/fisher_spectrum/fisher_qnn.py --num-inputs 2 --num-thetas 2 --blocks 1
+
+      - name: Easy-QNN trainability smoke test
+        run: python experiments/trainability/easy_qnn.py --runs 1 --maxiter 1 --samples-per-class 2
