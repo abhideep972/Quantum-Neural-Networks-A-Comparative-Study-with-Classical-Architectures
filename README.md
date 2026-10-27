@@ -15,7 +15,7 @@ I studied and reproduced selected analyses involving:
 - comparisons between classical feed-forward networks, an "easy" quantum model, and a more expressive QNN;
 - the relationship between Fisher-spectrum concentration, flat optimization landscapes, **trainability**, and barren-plateau behaviour.
 
-The internship report and final presentation used these ideas to compare classical and quantum model parameterizations and to understand how the choice of quantum encoding can alter the optimization landscape.
+The project used these ideas to compare classical and quantum model parameterizations and to understand how the choice of quantum encoding can alter the optimization landscape.
 
 ## Important provenance note
 
@@ -32,7 +32,7 @@ Archived software release: https://doi.org/10.5281/zenodo.4732830
 
 The original software is distributed under the **Apache License 2.0**. Its license is retained in [`upstream_code/LICENSE`](upstream_code/LICENSE).
 
-My contribution in this repository is the **internship study/reproduction context, documentation, selection of the analyses used during the project, and the accompanying report/presentation**.
+My contribution in this repository is the **internship study/reproduction context, documentation, and selection of the analyses used during the project**.
 
 ## Repository structure
 
@@ -42,10 +42,6 @@ Quantum-Neural-Networks-A-Comparative-Study-with-Classical-Architectures/
 ├── ATTRIBUTION.md
 ├── requirements-legacy.txt
 ├── .gitignore
-│
-├── docs/
-│   ├── Training_Report.pdf
-│   └── Final_Presentation.pdf
 │
 ├── upstream_code/
 │   ├── LICENSE
@@ -94,15 +90,6 @@ optimization-landscape geometry
 trainability / barren-plateau behaviour
 ```
 
-## Internship documents
-
-The repository includes the materials I prepared during the IISER Bhopal project:
-
-- [`docs/Training_Report.pdf`](docs/Training_Report.pdf)
-- [`docs/Final_Presentation.pdf`](docs/Final_Presentation.pdf)
-
-These document my study of QNN architecture, feature mapping, Fisher information, effective dimension, Fisher spectra, and trainability.
-
 ## Legacy environment
 
 The original reproduction code was written for an older Qiskit/PyTorch stack. A historically compatible environment is approximately:
@@ -143,4 +130,3 @@ The QNN example constructs a feature map and variational form, evaluates model p
 ## License and reuse
 
 The copied upstream implementation is licensed under Apache-2.0; see [`upstream_code/LICENSE`](upstream_code/LICENSE).  
-The internship report and presentation are included as project documentation and are not relicensed by this repository.

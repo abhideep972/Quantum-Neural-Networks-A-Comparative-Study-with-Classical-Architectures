@@ -21,9 +21,3 @@ A. Abbas, D. Sutter, C. Zoufal, A. Lucchi, A. Figalli, and S. Woerner,
 Files copied from that repository are kept under `upstream_code/` or
 `reproduction/`. They should not be interpreted as original software
 authored by Abhideep Jain.
-
-## Internship materials
-
-`docs/Training_Report.pdf` and `docs/Final_Presentation.pdf` are the
-student's internship materials prepared in the context of the IISER Bhopal
-project under Dr. Kuntal Roy.
