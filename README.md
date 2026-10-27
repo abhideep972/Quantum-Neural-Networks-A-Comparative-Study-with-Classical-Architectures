@@ -95,6 +95,12 @@ The Fisher-information eigenvalue distributions compare the local geometry of th
 
 A strong concentration of eigenvalues close to zero corresponds to many insensitive or locally flat parameter directions. Large isolated eigenvalues indicate strong anisotropy in the parameter space. The comparison therefore provides a geometric way of studying optimization behaviour beyond simply comparing training loss.
 
+### Fisher-information boxplots
+
+![Fisher-information boxplots](figures/fisher_boxplots.png)
+
+The boxplots show the distribution of sorted Fisher eigenvalue ranks across the sampled parameterizations, making differences in near-zero directions and spectral spread easier to compare.
+
 ### Cumulative Fisher spectrum
 
 ![Cumulative Fisher spectrum](figures/fisher_cumulative.png)
