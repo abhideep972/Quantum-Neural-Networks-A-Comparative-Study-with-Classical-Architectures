@@ -111,7 +111,7 @@ This makes differences in spectral concentration between the classical network a
 
 ### Trainability comparison
 
-![Trainability](figures/trainability_loss.png)
+![Trainability](figures/trainability_loss_5runs.png)
 
 The training-loss comparison shows the mean and standard deviation across five independent optimization runs. The quantum neural network with the more expressive feature map converges to the lowest final loss (0.2290) with very small run-to-run variation, while the easy quantum model reaches an intermediate loss (0.4270). The classical network has the highest mean final loss (0.4852) and substantially larger variance because some runs remain close to the chance-level solution.
 
