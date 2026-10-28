@@ -302,7 +302,7 @@ for col, (title, key, color) in enumerate(zip(titles, keys, colors)):
 axes[0, 0].set_ylabel("eigenvalue")
 axes[1, 0].set_ylabel("eigenvalue (< 1)")
 fig.tight_layout()
-fig.savefig(OUT / "fisher_boxplots.png", dpi=250)
+fig.savefig(OUT / "fisher_information_boxplots.png", dpi=250)
 plt.close(fig)
 
 print("\nEFFECTIVE DIMENSION")

@@ -97,7 +97,7 @@ A strong concentration of eigenvalues close to zero corresponds to many insensit
 
 ### Fisher-information boxplots
 
-![Fisher-information boxplots](figures/fisher_boxplots.png)
+![Fisher-information boxplots](figures/fisher_information_boxplots.png)
 
 The boxplots show the distribution of sorted Fisher eigenvalue ranks across the sampled parameterizations, making differences in near-zero directions and spectral spread easier to compare.
 
