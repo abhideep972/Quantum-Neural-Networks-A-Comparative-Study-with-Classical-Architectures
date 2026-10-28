@@ -19,7 +19,6 @@ experiments/
   fisher_spectrum/            Fisher-information spectrum experiments
   trainability/               classical/QNN training experiments
 figures/                      reproduced project results
-tests/                        numerical and smoke tests
 .github/workflows/            automated test workflow
 requirements.txt
 ATTRIBUTION.md
@@ -126,14 +125,6 @@ python -m venv .venv
 # activate the environment
 pip install -r requirements.txt
 ```
-
-## Tests
-
-```bash
-pytest -q
-```
-
-The tests cover probability evaluation, parameter-shift gradients, Fisher information matrices, effective dimension, and numerical agreement between independent statevector evaluation paths.
 
 ## Research context
 
