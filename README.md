@@ -113,9 +113,9 @@ This makes differences in spectral concentration between the classical network a
 
 ![Trainability](figures/trainability_loss.png)
 
-The training-loss comparison examines how the different model architectures behave under optimization.
+The training-loss comparison shows the mean and standard deviation across five independent optimization runs. The quantum neural network with the more expressive feature map converges to the lowest final loss (0.2290) with very small run-to-run variation, while the easy quantum model reaches an intermediate loss (0.4270). The classical network has the highest mean final loss (0.4852) and substantially larger variance because some runs remain close to the chance-level solution.
 
-Together with the Fisher-spectrum results, this connects the geometry of the parameter space to practical trainability: highly degenerate or poorly conditioned Fisher spectra can correspond to flat or strongly anisotropic optimization landscapes, while the choice of quantum feature map can substantially alter that geometry.
+Together with the Fisher-spectrum results, this supports a connection between a less-degenerate Fisher geometry and more reliable optimization behaviour.
 
 ## Installation
 
