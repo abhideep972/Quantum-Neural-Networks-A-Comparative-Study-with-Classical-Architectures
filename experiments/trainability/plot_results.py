@@ -60,9 +60,9 @@ def main():
     ax.legend()
     fig.tight_layout()
 
-    out = ROOT / "results" / "final_figures"
+    out = ROOT / "figures"
     out.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out / "trainability_loss_new.png", dpi=250)
+    fig.savefig(out / "trainability_loss.png", dpi=250)
     plt.close(fig)
 
     print("SUMMARY")
@@ -76,7 +76,7 @@ def main():
             f"final_mean={arr[:,-1].mean():.9f} "
             f"final_std={arr[:,-1].std():.9f}"
         )
-    print("saved", out / "trainability_loss_new.png")
+    print("saved", out / "trainability_loss.png")
 
 
 if __name__ == "__main__":
