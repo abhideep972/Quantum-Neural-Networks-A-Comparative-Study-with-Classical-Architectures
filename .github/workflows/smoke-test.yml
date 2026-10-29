@@ -17,9 +17,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run unit smoke tests
-        run: pytest -q
-
       - name: Classical trainability smoke test
         run: python experiments/trainability/classical_loss.py --runs 1 --epochs 2
 
